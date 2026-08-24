@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import "prismjs/themes/prism-tomorrow.css";
 import Editor from "react-simple-code-editor";
 import prism from "prismjs";
@@ -9,6 +9,30 @@ import axios from "axios";
 import "./App.css";
 
 function App() {
+    const panelRefs = useRef([]);
+
+  function handlePanelMouseMove(event, index) {
+    const panel = panelRefs.current[index];
+
+    if (!panel) return;
+
+    const rect = panel.getBoundingClientRect();
+
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    panel.style.setProperty("--mouse-x", `${x}px`);
+    panel.style.setProperty("--mouse-y", `${y}px`);
+  }
+
+  function handlePanelMouseLeave(index) {
+    const panel = panelRefs.current[index];
+
+    if (!panel) return;
+
+    panel.style.setProperty("--mouse-x", "50%");
+    panel.style.setProperty("--mouse-y", "50%");
+  }
   const [activePage, setActivePage] = useState("review");
 
   const [code, setCode] = useState(`function sum() {
@@ -228,7 +252,14 @@ function App() {
 
             {/* CODE PANEL */}
 
-            <section className="glass-panel editor-panel">
+            <section
+  ref={(element) => {
+    panelRefs.current[0] = element;
+  }}
+  className="glass-panel editor-panel"
+  onMouseMove={(event) => handlePanelMouseMove(event, 0)}
+  onMouseLeave={() => handlePanelMouseLeave(0)}
+>
 
               <div className="panel-toolbar">
 
@@ -331,7 +362,14 @@ function App() {
 
             {/* AI PANEL */}
 
-            <section className="glass-panel review-panel">
+            <section
+  ref={(element) => {
+    panelRefs.current[1] = element;
+  }}
+  className="glass-panel review-panel"
+  onMouseMove={(event) => handlePanelMouseMove(event, 1)}
+  onMouseLeave={() => handlePanelMouseLeave(1)}
+>
 
               <div className="panel-toolbar">
 
