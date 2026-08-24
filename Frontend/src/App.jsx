@@ -1,144 +1,565 @@
-import { useState } from 'react'
-import "prismjs/themes/prism-tomorrow.css"
-import Editor from "react-simple-code-editor"
-import prism from "prismjs"
-import Markdown from "react-markdown"
-import rehypeHighlight from "rehype-highlight"
-import "highlight.js/styles/github-dark.css"
-import axios from 'axios'
-import './App.css'
+import { useState } from "react";
+import "prismjs/themes/prism-tomorrow.css";
+import Editor from "react-simple-code-editor";
+import prism from "prismjs";
+import Markdown from "react-markdown";
+import rehypeHighlight from "rehype-highlight";
+import "highlight.js/styles/github-dark.css";
+import axios from "axios";
+import "./App.css";
 
 function App() {
+  const [activePage, setActivePage] = useState("review");
 
   const [code, setCode] = useState(`function sum() {
-  return 1 + 1
-}`)
+  return 1 + 1;
+}`);
 
-  const [review, setReview] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [review, setReview] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function reviewCode() {
+    if (!code.trim()) return;
+
+    setLoading(true);
+    setReview("");
+
     try {
-      setLoading(true)
-
       const response = await axios.post(
-        'http://localhost:3000/ai/get-review',
+        "http://localhost:3000/ai/get-review",
         { code }
-      )
+      );
 
-      setReview(response.data)
+      setReview(response.data);
     } catch (error) {
-      console.error(error)
-      setReview('❌ Unable to get the code review. Please make sure the backend is running.')
+      console.error(error);
+
+      setReview(
+        "### ⚠ Review Failed\n\nUnable to connect to the AI reviewer. Please make sure the backend server is running."
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   return (
-    <main>
+    <main className="app-shell">
 
-      {/* LEFT SIDE */}
-      <div className="left">
+      {/* =====================================================
+          SIDEBAR
+      ===================================================== */}
 
-        <div className="code">
-          <Editor
-            value={code}
-            onValueChange={code => setCode(code)}
-            highlight={code =>
-              prism.highlight(
-                code,
-                prism.languages.javascript,
-                "javascript"
-              )
-            }
-            padding={10}
-            style={{
-              fontFamily: '"Fira Code", "Fira Mono", monospace',
-              fontSize: 16,
-              minHeight: "100%",
-              width: "100%",
-              outline: "none"
-            }}
-          />
+      <aside className="sidebar">
+
+        <div className="brand-section">
+
+          <div className="brand-logo">
+            ◈
+          </div>
+
+          <div className="brand-text">
+            <h1>CODE-MATE</h1>
+            <span>AI CODE REVIEWER</span>
+          </div>
+
         </div>
 
-        <button
-          onClick={reviewCode}
-          className="review"
-          disabled={loading}
-        >
-          {loading ? "Reviewing..." : "Review"}
-        </button>
 
-      </div>
+        <div className="sidebar-divider"></div>
 
-      {/* RIGHT SIDE */}
-      <div className="right">
 
-        {review ? (
-          <div className="review-content">
-            <Markdown
-              rehypePlugins={[rehypeHighlight]}
-              components={{
-                h1: ({ children }) => (
-                  <h1 className="review-heading">{children}</h1>
-                ),
+        <nav className="navigation">
 
-                h2: ({ children }) => (
-                  <h2 className="review-heading">{children}</h2>
-                ),
+          <p className="nav-label">
+            WORKSPACE
+          </p>
 
-                h3: ({ children }) => (
-                  <h3 className="review-heading">{children}</h3>
-                ),
+          <button
+            className={`nav-item ${
+              activePage === "dashboard" ? "active" : ""
+            }`}
+            onClick={() => setActivePage("dashboard")}
+          >
+            <span className="nav-icon">⌂</span>
+            <span>Dashboard</span>
+          </button>
 
-                p: ({ children }) => (
-                  <p className="review-paragraph">{children}</p>
-                ),
 
-                ul: ({ children }) => (
-                  <ul className="review-list">{children}</ul>
-                ),
+          <button
+            className={`nav-item ${
+              activePage === "review" ? "active" : ""
+            }`}
+            onClick={() => setActivePage("review")}
+          >
+            <span className="nav-icon">⌘</span>
+            <span>Code Review</span>
+          </button>
 
-                ol: ({ children }) => (
-                  <ol className="review-list">{children}</ol>
-                ),
 
-                li: ({ children }) => (
-                  <li>{children}</li>
-                ),
+          <button
+            className={`nav-item ${
+              activePage === "history" ? "active" : ""
+            }`}
+            onClick={() => setActivePage("history")}
+          >
+            <span className="nav-icon">◷</span>
+            <span>History</span>
+          </button>
 
-                pre: ({ children }) => (
-                  <pre className="review-code">
-                    {children}
-                  </pre>
-                ),
 
-                code: ({ children, className }) => (
-                  <code className={className || ""}>
-                    {children}
-                  </code>
-                )
-              }}
-            >
-              {review}
-            </Markdown>
+          <p className="nav-label second">
+            INSIGHTS
+          </p>
+
+
+          <button
+            className={`nav-item ${
+              activePage === "analytics" ? "active" : ""
+            }`}
+            onClick={() => setActivePage("analytics")}
+          >
+            <span className="nav-icon">◫</span>
+            <span>Analytics</span>
+          </button>
+
+
+          <button
+            className={`nav-item ${
+              activePage === "learn" ? "active" : ""
+            }`}
+            onClick={() => setActivePage("learn")}
+          >
+            <span className="nav-icon">✦</span>
+            <span>Learn</span>
+          </button>
+
+        </nav>
+
+
+        <div className="sidebar-bottom">
+
+          <button
+            className={`nav-item ${
+              activePage === "settings" ? "active" : ""
+            }`}
+            onClick={() => setActivePage("settings")}
+          >
+            <span className="nav-icon">⚙</span>
+            <span>Settings</span>
+          </button>
+
+
+          <div className="user-card">
+
+            <div className="user-avatar">
+              DK
+            </div>
+
+            <div className="user-info">
+              <strong>Code-Mate Team</strong>
+              <span>Developer</span>
+            </div>
+
+            <span className="user-menu">
+              ⋮
+            </span>
+
           </div>
-        ) : (
-          <div className="empty-review">
-            <h2>AI Code Review</h2>
-            <p>
-              Enter your code on the left and click Review to get
-              an AI-powered analysis.
-            </p>
+
+        </div>
+
+      </aside>
+
+
+      {/* =====================================================
+          MAIN AREA
+      ===================================================== */}
+
+      <section className="main-area">
+
+        {/* TOP BAR */}
+
+        <header className="topbar">
+
+          <div className="page-heading">
+
+            <span className="page-kicker">
+              WORKSPACE
+            </span>
+
+            <h2>
+              {activePage === "review"
+                ? "Code Review"
+                : activePage.charAt(0).toUpperCase() +
+                  activePage.slice(1)}
+            </h2>
+
           </div>
+
+
+          <div className="topbar-actions">
+
+            <div className="engine-status">
+
+              <span className="status-dot"></span>
+
+              <span>
+                AI ENGINE
+              </span>
+
+              <strong>
+                ONLINE
+              </strong>
+
+            </div>
+
+          </div>
+
+        </header>
+
+
+        {/* =================================================
+            REVIEW WORKSPACE
+        ================================================= */}
+
+        {activePage === "review" && (
+
+          <div className="workspace">
+
+            {/* CODE PANEL */}
+
+            <section className="glass-panel editor-panel">
+
+              <div className="panel-toolbar">
+
+                <div className="panel-title">
+
+                  <span className="panel-dot blue"></span>
+
+                  <span>
+                    CODE EDITOR
+                  </span>
+
+                </div>
+
+
+                <select
+                  className="language-select"
+                  defaultValue="javascript"
+                >
+                  <option value="javascript">
+                    JavaScript
+                  </option>
+
+                  <option value="python">
+                    Python
+                  </option>
+
+                  <option value="java">
+                    Java
+                  </option>
+
+                  <option value="cpp">
+                    C / C++
+                  </option>
+                </select>
+
+              </div>
+
+
+              <div className="editor-container">
+
+                <Editor
+                  value={code}
+                  onValueChange={(value) =>
+                    setCode(value)
+                  }
+                  highlight={(value) =>
+                    prism.highlight(
+                      value,
+                      prism.languages.javascript,
+                      "javascript"
+                    )
+                  }
+                  padding={20}
+                  style={{
+                    fontFamily:
+                      '"Fira Code", "Fira Mono", Consolas, monospace',
+                    fontSize: 14,
+                    lineHeight: 1.7,
+                    minHeight: "100%",
+                    width: "100%",
+                  }}
+                />
+
+              </div>
+
+
+              <div className="editor-footer">
+
+                <div className="editor-info">
+                  JavaScript
+                </div>
+
+
+                <button
+                  className={`review-button ${
+                    loading ? "loading" : ""
+                  }`}
+                  onClick={reviewCode}
+                  disabled={loading}
+                >
+
+                  {loading ? (
+                    <>
+                      <span className="button-spinner"></span>
+                      ANALYZING...
+                    </>
+                  ) : (
+                    <>
+                      <span>⚡</span>
+                      ANALYZE CODE
+                    </>
+                  )}
+
+                </button>
+
+              </div>
+
+            </section>
+
+
+            {/* AI PANEL */}
+
+            <section className="glass-panel review-panel">
+
+              <div className="panel-toolbar">
+
+                <div className="panel-title">
+
+                  <span className="panel-dot purple"></span>
+
+                  <span>
+                    AI REVIEW
+                  </span>
+
+                </div>
+
+
+                <div className="ai-mini-status">
+                  ◉ GEMINI
+                </div>
+
+              </div>
+
+
+              {!loading && !review && (
+
+                <div className="review-empty">
+
+                  <div className="ai-orb">
+
+                    <span>
+                      AI
+                    </span>
+
+                  </div>
+
+                  <h3>
+                    Ready to analyze
+                  </h3>
+
+                  <p>
+                    Write or paste your code into the
+                    editor and let Code-Mate identify
+                    bugs, security issues and
+                    improvements.
+                  </p>
+
+
+                  <div className="review-capabilities">
+
+                    <span>
+                      🐛 Bugs
+                    </span>
+
+                    <span>
+                      🔐 Security
+                    </span>
+
+                    <span>
+                      ⚡ Performance
+                    </span>
+
+                  </div>
+
+                </div>
+
+              )}
+
+
+              {loading && (
+
+                <div className="analysis-state">
+
+                  <div className="analysis-orb">
+
+                    <div className="analysis-ring"></div>
+
+                    <div className="analysis-core">
+                      AI
+                    </div>
+
+                  </div>
+
+
+                  <h3>
+                    Analyzing your code
+                  </h3>
+
+                  <p>
+                    Code-Mate is examining your code...
+                  </p>
+
+
+                  <div className="analysis-list">
+
+                    <div className="analysis-item completed">
+                      <span>✓</span>
+                      Syntax analysis
+                    </div>
+
+                    <div className="analysis-item completed">
+                      <span>✓</span>
+                      Logic analysis
+                    </div>
+
+                    <div className="analysis-item scanning">
+                      <span>◉</span>
+                      Security analysis
+                    </div>
+
+                    <div className="analysis-item">
+                      <span>○</span>
+                      Performance analysis
+                    </div>
+
+                  </div>
+
+                </div>
+
+              )}
+
+
+              {!loading && review && (
+
+                <div className="review-result">
+
+                  <div className="complete-badge">
+                    <span>✓</span>
+                    ANALYSIS COMPLETE
+                  </div>
+
+
+                  <Markdown
+                    rehypePlugins={[
+                      rehypeHighlight
+                    ]}
+                    components={{
+
+                      h1: ({ children }) => (
+                        <h2 className="review-heading">
+                          {children}
+                        </h2>
+                      ),
+
+                      h2: ({ children }) => (
+                        <h2 className="review-heading">
+                          {children}
+                        </h2>
+                      ),
+
+                      h3: ({ children }) => (
+                        <h3 className="review-subheading">
+                          {children}
+                        </h3>
+                      ),
+
+                      p: ({ children }) => (
+                        <p className="review-paragraph">
+                          {children}
+                        </p>
+                      ),
+
+                      ul: ({ children }) => (
+                        <ul className="review-list">
+                          {children}
+                        </ul>
+                      ),
+
+                      ol: ({ children }) => (
+                        <ol className="review-list">
+                          {children}
+                        </ol>
+                      ),
+
+                      pre: ({ children }) => (
+                        <pre className="review-code">
+                          {children}
+                        </pre>
+                      ),
+
+                    }}
+                  >
+                    {review}
+                  </Markdown>
+
+                </div>
+
+              )}
+
+            </section>
+
+          </div>
+
         )}
 
-      </div>
+
+        {/* =================================================
+            FUTURE PAGES
+        ================================================= */}
+
+        {activePage !== "review" && (
+
+          <div className="coming-soon">
+
+            <div className="coming-icon">
+              ◈
+            </div>
+
+            <span>
+              CODE-MATE
+            </span>
+
+            <h2>
+              {activePage.charAt(0).toUpperCase() +
+                activePage.slice(1)}
+            </h2>
+
+            <p>
+              This module is coming next.
+              We're building Code-Mate one
+              layer at a time.
+            </p>
+
+          </div>
+
+        )}
+
+      </section>
 
     </main>
-  )
+  );
 }
 
-export default App
+export default App;
