@@ -24,9 +24,9 @@ If the code is already good, say so and suggest possible improvements.
 `
 });
 
-async function aiService(code) {
+async function aiService(code,language) {
     const prompt = `
-Review the following code:
+Review the following ${language} code:
 
 \`\`\`
 ${code}

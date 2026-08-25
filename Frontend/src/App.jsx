@@ -34,6 +34,7 @@ function App() {
     panel.style.setProperty("--mouse-y", "50%");
   }
   const [activePage, setActivePage] = useState("review");
+  const [language, setLanguage] = useState("javascript");
 
   const [code, setCode] = useState(`function sum() {
   return 1 + 1;
@@ -42,6 +43,11 @@ function App() {
   const [review, setReview] = useState("");
   const [loading, setLoading] = useState(false);
 
+  function clearCode() {
+  setCode("");
+  setReview("");
+  setLoading(false);
+}
   async function reviewCode() {
     if (!code.trim()) return;
 
@@ -51,7 +57,7 @@ function App() {
     try {
       const response = await axios.post(
         "http://localhost:3000/ai/get-review",
-        { code }
+        { code,language }
       );
 
       setReview(response.data);
@@ -252,14 +258,7 @@ function App() {
 
             {/* CODE PANEL */}
 
-            <section
-  ref={(element) => {
-    panelRefs.current[0] = element;
-  }}
-  className="glass-panel editor-panel"
-  onMouseMove={(event) => handlePanelMouseMove(event, 0)}
-  onMouseLeave={() => handlePanelMouseLeave(0)}
->
+            <section className="glass-panel editor-panel">
 
               <div className="panel-toolbar">
 
@@ -275,9 +274,10 @@ function App() {
 
 
                 <select
-                  className="language-select"
-                  defaultValue="javascript"
-                >
+  className="language-select"
+  value={language}
+  onChange={(event) => setLanguage(event.target.value)}
+>
                   <option value="javascript">
                     JavaScript
                   </option>
@@ -331,7 +331,15 @@ function App() {
                 <div className="editor-info">
                   JavaScript
                 </div>
-
+                <div className="editor-actions">
+<button
+  className="clear-button"
+  onClick={clearCode}
+  disabled={loading}
+>
+  <span>⌫</span>
+  CLEAR
+</button>
 
                 <button
                   className={`review-button ${
@@ -356,20 +364,14 @@ function App() {
                 </button>
 
               </div>
+              </div>
 
             </section>
 
 
             {/* AI PANEL */}
 
-            <section
-  ref={(element) => {
-    panelRefs.current[1] = element;
-  }}
-  className="glass-panel review-panel"
-  onMouseMove={(event) => handlePanelMouseMove(event, 1)}
-  onMouseLeave={() => handlePanelMouseLeave(1)}
->
+            <section className="glass-panel review-panel">
 
               <div className="panel-toolbar">
 

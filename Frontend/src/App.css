@@ -976,7 +976,7 @@ body {
 
   gap: 8px;
 
-  min-width: 150px;
+  min-width: 180px;
 
   padding: 10px 16px;
 
@@ -1004,11 +1004,47 @@ body {
   cursor: pointer;
 
   overflow: hidden;
+    isolation: isolate;
 
   transition:
     transform 0.25s ease,
     box-shadow 0.3s ease,
     filter 0.3s ease;
+}
+.review-button::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: -120%;
+
+  width: 70%;
+  height: 100%;
+
+  background: linear-gradient(
+    110deg,
+    transparent,
+    rgba(255, 255, 255, 0.18),
+    transparent
+  );
+
+  transform: skewX(-20deg);
+
+  transition: left 0.6s ease;
+
+  pointer-events: none;
+
+  z-index: 0;
+}
+
+.review-button:hover::before {
+  left: 140%;
+}
+
+.review-button > * {
+  position: relative;
+  z-index: 1;
 }
 
 .review-button::before {
@@ -1050,6 +1086,11 @@ body {
 
   border-color:
     rgba(125, 211, 252, 0.45);
+      filter: brightness(1.12);
+
+  box-shadow:
+    0 12px 35px rgba(37, 99, 235, 0.30),
+    0 0 30px rgba(124, 58, 237, 0.20);
 }
 
 .review-button:active {
@@ -1111,7 +1152,10 @@ body {
   padding: 40px;
 
   text-align: center;
+    width: 100%;
+  max-width: 520px;
 }
+
 
 .ai-orb {
   position: relative;
@@ -1139,8 +1183,7 @@ body {
   border:
     1px solid rgba(56, 189, 248, 0.18);
 
-  box-shadow:
-    0 0 45px rgba(56, 189, 248, 0.08);
+
 
   animation:
   float 3s ease-in-out infinite,
@@ -1178,8 +1221,41 @@ body {
 
   animation: orbRotate 5s linear infinite;
 }
+.ai-orb::after {
+  content: "";
+
+  position: absolute;
+
+  inset: -6px;
+
+  border:
+    1px solid rgba(56, 189, 248, 0.12);
+
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 18px rgba(56, 189, 248, 0.08);
+
+  animation: orbPulseRing 3s ease-in-out infinite;
+
+  pointer-events: none;
+}
+
+@keyframes orbPulseRing {
+  0%,
+  100% {
+    transform: scale(0.96);
+    opacity: 0.45;
+  }
+
+  50% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+}
 
 .ai-orb span {
+    position: relative;
   color: #7dd3fc;
 
   font-family: "Space Grotesk", sans-serif;
@@ -1238,9 +1314,9 @@ body {
 
   margin: 0;
 
-  color: #64748b;
+ color: #94a3b8;
 
-  font-size: 11px;
+  font-size: 12px;
 
   line-height: 1.7;
 }
@@ -1258,7 +1334,7 @@ body {
 }
 
 .review-capabilities span {
-  padding: 7px 9px;
+  padding: 8px 12px;
 
   border:
     1px solid rgba(148, 163, 184, 0.10);
@@ -1268,14 +1344,28 @@ body {
   background:
     rgba(255, 255, 255, 0.025);
 
-  color: #64748b;
+  color: #94a3b8;
 
-  font-size: 8px;
+  font-size: 9px;
 
   transition:
     transform 0.2s ease,
     border-color 0.2s ease,
     color 0.2s ease;
+}
+.review-capabilities span:hover {
+  color: #e2e8f0;
+
+  border-color:
+    rgba(56, 189, 248, 0.25);
+
+  background:
+    rgba(56, 189, 248, 0.06);
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 6px 18px rgba(56, 189, 248, 0.08);
 }
 
 .review-capabilities span:hover {
@@ -1445,6 +1535,34 @@ body {
   padding: 18px;
 
   overflow-y: auto;
+    background: rgba(255, 255, 255, 0.012);
+
+  border-radius: 12px;
+}
+.review-result::-webkit-scrollbar {
+  width: 5px;
+}
+
+.review-result::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.review-result::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(56, 189, 248, 0.45),
+    rgba(139, 92, 246, 0.45)
+  );
+
+  border-radius: 10px;
+}
+
+.review-result::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(56, 189, 248, 0.7),
+    rgba(139, 92, 246, 0.7)
+  );
 }
 
 .complete-badge {
@@ -1456,7 +1574,7 @@ body {
 
   margin-bottom: 14px;
 
-  padding: 6px 9px;
+  padding: 7px 11px;
 
   border:
     1px solid rgba(34, 197, 94, 0.14);
@@ -1468,7 +1586,7 @@ body {
 
   color: #86efac;
 
-  font-size: 8px;
+  font-size: 9px;
 
   font-weight: 700;
 
@@ -1489,28 +1607,32 @@ body {
     1px solid rgba(148, 163, 184, 0.10);
 
   color: #7dd3fc;
+    text-shadow:
+    0 0 12px rgba(56, 189, 248, 0.20);
 
   font-family: "Space Grotesk", sans-serif;
 
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .review-subheading {
   margin-top: 17px;
 
   color: #a78bfa;
+    text-shadow:
+    0 0 10px rgba(167, 139, 250, 0.18);
 
   font-family: "Space Grotesk", sans-serif;
 
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .review-paragraph {
   color: #aab7c9;
 
-  font-size: 11px;
+  font-size: 12px;
 
-  line-height: 1.75;
+  line-height: 1.8;
 }
 
 .review-list {
@@ -1518,19 +1640,19 @@ body {
 
   color: #aab7c9;
 
-  font-size: 11px;
+  font-size: 12px;
 
-  line-height: 1.7;
+  line-height: 1.8;
 }
 
 .review-list li {
-  margin-bottom: 6px;
+  margin-bottom: 9px;
 }
 
 .review-code {
   margin: 14px 0;
 
-  padding: 14px;
+  padding: 16px;
 
   overflow-x: auto;
 
@@ -1547,7 +1669,7 @@ body {
     Consolas,
     monospace;
 
-  font-size: 11px;
+  font-size: 12px;
 
   line-height: 1.65;
 
@@ -1732,4 +1854,66 @@ body {
   .topbar {
     padding-top: 10px;
   }
+}
+.clear-button {
+  padding: 10px 16px;
+
+  border: 1px solid rgba(148, 163, 184, 0.16);
+
+  border-radius: 9px;
+
+  background: rgba(15, 23, 42, 0.55);
+
+  color: #94a3b8;
+
+  font-family: "Space Grotesk", sans-serif;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.5px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.clear-button:hover {
+  color: #f8fafc;
+
+  background: rgba(30, 41, 59, 0.75);
+
+  border-color: rgba(148, 163, 184, 0.35);
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.18);
+}
+
+.clear-button:active {
+  transform: translateY(0);
+}
+
+.clear-button:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+.editor-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.clear-button span {
+  font-size: 12px;
+  line-height: 1;
 }
