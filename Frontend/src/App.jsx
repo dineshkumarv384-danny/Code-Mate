@@ -42,6 +42,31 @@ function App() {
 
   const [review, setReview] = useState("");
   const [loading, setLoading] = useState(false);
+  const [history, setHistory] = useState([]);
+  async function loadHistory() {
+    try {
+        const response = await axios.get(
+            "http://localhost:3000/api/history"
+        );
+
+        setHistory(response.data);
+    } catch (error) {
+        console.error("Failed to load history:", error);
+    }
+}
+async function deleteReview(id) {
+    try {
+        await axios.delete(
+            `http://localhost:3000/api/history/${id}`
+        );
+
+        setHistory((currentHistory) =>
+            currentHistory.filter((item) => item._id !== id)
+        );
+    } catch (error) {
+        console.error("Failed to delete review:", error);
+    }
+}
 
   function clearCode() {
   setCode("");
@@ -127,14 +152,17 @@ function App() {
 
 
           <button
-            className={`nav-item ${
-              activePage === "history" ? "active" : ""
-            }`}
-            onClick={() => setActivePage("history")}
-          >
-            <span className="nav-icon">◷</span>
-            <span>History</span>
-          </button>
+    className={`nav-item ${
+        activePage === "history" ? "active" : ""
+    }`}
+    onClick={() => {
+        setActivePage("history");
+        loadHistory();
+    }}
+>
+    <span className="nav-icon">◷</span>
+    <span>History</span>
+</button>
 
 
           <p className="nav-label second">
@@ -568,6 +596,43 @@ function App() {
         {/* =================================================
             FUTURE PAGES
         ================================================= */}
+{activePage === "history" && (
+    <div className="history-page">
+        <h2>Review History</h2>
+
+        {history.length === 0 ? (
+            <p>No reviews found yet.</p>
+        ) : (
+            history.map((item) => (
+                <div className="history-card" key={item._id}>
+                    <div className="history-card-header">
+                        <span>{item.language}</span>
+
+                        <span>
+                            {new Date(item.createdAt).toLocaleString()}
+                                <button
+        className="history-delete-button"
+        onClick={() => deleteReview(item._id)}
+    >
+        DELETE
+    </button>
+
+                        </span>
+                    </div>
+
+                    <pre>{item.code}</pre>
+
+                    <Markdown>
+                        {item.review}
+                    </Markdown>
+                </div>
+            ))
+        )}
+    </div>
+)}
+
+
+
 
         {activePage !== "review" && (
 
