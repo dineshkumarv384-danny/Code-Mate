@@ -43,6 +43,12 @@ function App() {
   const [review, setReview] = useState("");
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState([]);
+  const [dashboard, setDashboard] = useState({
+    totalReviews: 0,
+    languageStats: [],
+    recentReviews: [],
+    reviewActivity: []
+});
   async function loadHistory() {
     try {
         const response = await axios.get(
@@ -52,6 +58,17 @@ function App() {
         setHistory(response.data);
     } catch (error) {
         console.error("Failed to load history:", error);
+    }
+}
+async function loadDashboard() {
+    try {
+        const response = await axios.get(
+            "http://localhost:3000/api/dashboard"
+        );
+
+        setDashboard(response.data);
+    } catch (error) {
+        console.error("Failed to load dashboard:", error);
     }
 }
 async function deleteReview(id) {
@@ -133,7 +150,10 @@ async function deleteReview(id) {
             className={`nav-item ${
               activePage === "dashboard" ? "active" : ""
             }`}
-            onClick={() => setActivePage("dashboard")}
+            onClick={() => {
+    setActivePage("dashboard");
+    loadDashboard();
+}}
           >
             <span className="nav-icon">⌂</span>
             <span>Dashboard</span>
@@ -596,6 +616,88 @@ async function deleteReview(id) {
         {/* =================================================
             FUTURE PAGES
         ================================================= */}
+       {activePage === "dashboard" && (
+    <div className="dashboard-page">
+        <h2>Dashboard</h2>
+
+        <div className="dashboard-stats">
+            <div className="dashboard-card">
+                <span className="dashboard-card-label">
+                    Total Reviews
+                </span>
+
+                <span className="dashboard-card-value">
+                    {dashboard.totalReviews}
+                </span>
+            </div>
+
+            <div className="dashboard-card">
+                <span className="dashboard-card-label">
+                    Languages Used
+                </span>
+
+                <span className="dashboard-card-value">
+                    {dashboard.languageStats.length}
+                </span>
+            </div>
+        </div>
+
+        <div className="dashboard-section">
+            <h3>Reviews by Language</h3>
+
+            {dashboard.languageStats.length === 0 ? (
+                <p>No review data available.</p>
+            ) : (
+                dashboard.languageStats.map((item) => (
+                    <div
+                        className="language-stat"
+                        key={item._id}
+                    >
+                        <span>{item._id}</span>
+                        <span>{item.count} reviews</span>
+                    </div>
+                ))
+            )}
+        </div>
+
+        <div className="dashboard-section">
+            <h3>Recent Reviews</h3>
+
+            {dashboard.recentReviews.length === 0 ? (
+                <p>No recent reviews.</p>
+            ) : (
+                dashboard.recentReviews.map((item) => (
+                    <div
+                        className="recent-review"
+                        key={item._id}
+                    >
+                        <span>{item.language}</span>
+
+                        <span>
+                            {new Date(
+                                item.createdAt
+                            ).toLocaleString()}
+                        </span>
+                    </div>
+                ))
+            )}
+    </div>
+    <div className="dashboard-section">
+    <h3>Review Activity</h3>
+
+    {dashboard.reviewActivity.length === 0 ? (
+        <p>No activity data available.</p>
+    ) : (
+        dashboard.reviewActivity.map((item) => (
+            <div className="activity-stat" key={item._id}>
+                <span>{item._id}</span>
+                <span>{item.count} reviews</span>
+            </div>
+        ))
+    )}
+    </div>
+</div>
+)}
 {activePage === "history" && (
     <div className="history-page">
         <h2>Review History</h2>
@@ -634,7 +736,9 @@ async function deleteReview(id) {
 
 
 
-        {activePage !== "review" && (
+        {activePage !== "review" &&
+    activePage !== "dashboard" &&
+    activePage !== "history" && (
 
           <div className="coming-soon">
 
