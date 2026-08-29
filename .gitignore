@@ -2,3 +2,5 @@
 .env.txt
 node_modules/
 npm-debug.log*
+.postman/
+postman/
