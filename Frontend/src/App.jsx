@@ -9,6 +9,12 @@ import axios from "axios";
 import "./App.css";
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authMode, setAuthMode] = useState("login");
+  const [authName, setAuthName] = useState("");
+const [authEmail, setAuthEmail] = useState("");
+const [authPassword, setAuthPassword] = useState("");
+const [showPassword, setShowPassword] = useState(false);
     const panelRefs = useRef([]);
 
   function handlePanelMouseMove(event, index) {
@@ -49,6 +55,43 @@ function App() {
     recentReviews: [],
     reviewActivity: []
 });
+async function handleAuth() {
+      if (!authEmail.trim() || !authPassword.trim()) {
+      alert("Please enter your email and password.");
+      return;
+    }
+
+    if (authMode === "register" && !authName.trim()) {
+      alert("Please enter your name.");
+      return;
+    }
+  try {
+    if (authMode === "register") {
+      await axios.post("http://localhost:3000/auth/register", {
+        name: authName,
+        email: authEmail,
+        password: authPassword,
+      });
+
+      alert("Account created successfully. Please sign in.");
+      setAuthMode("login");
+      setAuthPassword("");
+    } else {
+      await axios.post("http://localhost:3000/auth/login", {
+        email: authEmail,
+        password: authPassword,
+      });
+
+      setIsAuthenticated(true);
+    }
+  } catch (error) {
+    console.error("Authentication failed:", error);
+    alert(
+      error.response?.data?.message ||
+      "Authentication failed. Please check your details."
+    );
+  }
+}
   async function loadHistory() {
     try {
         const response = await axios.get(
@@ -114,6 +157,250 @@ async function deleteReview(id) {
     }
   }
 
+    if (!isAuthenticated) {
+  return (
+    <div className="auth-page">
+
+      {/* ================= AUTH BACKGROUND ================= */}
+
+      <div className="auth-background">
+
+        <div className="code-glow glow-one"></div>
+        <div className="code-glow glow-two"></div>
+
+        <div className="floating-code code-one">
+          {"</>"}
+        </div>
+
+        <div className="floating-code code-two">
+          {"{ }"}
+        </div>
+
+        <div className="floating-code code-three">
+          {"AI"}
+        </div>
+
+      </div>
+
+
+      {/* ================= AUTH LAYOUT ================= */}
+
+      <div className="auth-layout">
+
+
+        {/* ================= LOGIN / REGISTER CARD ================= */}
+
+        <div className="auth-card">
+
+          <div className="auth-brand">
+
+            <div className="auth-logo">
+              ◈
+            </div>
+
+            <div>
+              <h1>CODE-MATE</h1>
+              <span>AI CODE REVIEWER</span>
+            </div>
+
+          </div>
+
+
+          <h2>
+            {authMode === "login"
+              ? "Welcome Back"
+              : "Create Account"}
+          </h2>
+
+
+          <p className="auth-subtitle">
+            {authMode === "login"
+              ? "Continue your journey to write better code."
+              : "Create your developer account and start reviewing code."}
+          </p>
+
+
+       <div className={`auth-form ${authMode === "register" ? "auth-register" : "auth-login"}`}>
+
+
+            {/* ================= NAME ================= */}
+
+            {authMode === "register" && (
+              <div className="auth-input-group">
+
+                <label>NAME</label>
+
+                <input
+                  type="text"
+                  placeholder="Your name"
+                  value={authName}
+                  onChange={(event) =>
+                    setAuthName(event.target.value)
+                  }
+                />
+
+              </div>
+            )}
+
+
+            {/* ================= EMAIL ================= */}
+
+            <div className="auth-input-group">
+
+              <label>EMAIL</label>
+
+              <input
+                type="email"
+                placeholder="you@example.com"
+                value={authEmail}
+                onChange={(event) =>
+                  setAuthEmail(event.target.value)
+                }
+              />
+
+            </div>
+
+
+            {/* ================= PASSWORD ================= */}
+
+            <div className="auth-input-group">
+
+              <label>PASSWORD</label>
+
+              <div className="password-input-wrapper">
+
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••••••"
+                  value={authPassword}
+                  onChange={(event) =>
+                    setAuthPassword(event.target.value)
+                  }
+                />
+
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() =>
+                    setShowPassword(!showPassword)
+                  }
+                  aria-label={
+                    showPassword
+                      ? "Hide password"
+                      : "Show password"
+                  }
+                >
+                  {showPassword ? "🙈" : "👁"}
+                </button>
+
+              </div>
+
+            </div>
+
+
+            {/* ================= AUTH BUTTON ================= */}
+
+            <button
+              className="auth-demo-button"
+              onClick={handleAuth}
+            >
+              {authMode === "login"
+                ? "⚡ SIGN IN"
+                : "✦ CREATE ACCOUNT"}
+            </button>
+
+
+            {/* ================= SWITCH LOGIN / REGISTER ================= */}
+
+            <p className="auth-switch">
+
+              {authMode === "login"
+                ? "Don't have an account?"
+                : "Already have an account?"}{" "}
+
+              <button
+                type="button"
+                className="auth-link"
+                onClick={() =>
+                  setAuthMode(
+                    authMode === "login"
+                      ? "register"
+                      : "login"
+                  )
+                }
+              >
+                {authMode === "login"
+                  ? "Create account"
+                  : "Sign in"}
+              </button>
+
+            </p>
+
+
+          </div>
+
+        </div>
+
+
+        {/* ================= AI VISUAL PANEL ================= */}
+
+        <div className="auth-visual">
+          <div className="ai-scan-line"></div>
+
+  <div className="visual-floating-code floating-one">
+    const review = AI.analyze(code);
+  </div>
+
+  <div className="visual-floating-code floating-two">
+    ✓ Syntax detected
+  </div>
+
+  <div className="visual-floating-code floating-three">
+    {"{ quality: high }"}
+  </div>
+
+  <div className="visual-code-core">
+  <div className="visual-core-ring"></div>
+
+  <span className="ai-orbit-particle particle-one"></span>
+  <span className="ai-orbit-particle particle-two"></span>
+  <span className="ai-orbit-particle particle-three"></span>
+
+  <div className="visual-code-symbol">
+    &lt;/&gt;
+  </div>
+</div>
+  <div className="ai-connection-line"></div>
+  <div className="ai-data-pulse"></div>
+
+          <div className="visual-code-symbol">
+            &lt;/&gt;
+          </div>
+
+          <h2>
+            Code smarter.
+          </h2>
+
+          <p>
+            Review better.
+          </p>
+
+          <div className="visual-status">
+
+            <span className="status-dot"></span>
+
+            AI ENGINE ONLINE
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </div>
+  );
+}
   return (
     <main className="app-shell">
 
