@@ -1,27 +1,42 @@
+const mongoose = require("mongoose");
 const Review = require("../models/review.model");
 
 module.exports.getDashboard = async (req, res) => {
     try {
-        const totalReviews = await Review.countDocuments();
+        const totalReviews = await Review.countDocuments({
+    userId: new mongoose.Types.ObjectId(req.user.userId)
+});
 
-        const languageStats = await Review.aggregate([
-            {
-                $group: {
-                    _id: "$language",
-                    count: { $sum: 1 }
-                }
-            },
+       const languageStats = await Review.aggregate([
+    {
+        $match: {
+            userId: new mongoose.Types.ObjectId(req.user.userId)
+        }
+    },
+    {
+        $group: {
+            _id: "$language",
+            count: { $sum: 1 }
+        }
+    },
             {
                 $sort: { count: -1 }
             }
         ]);
 
-        const recentReviews = await Review.find()
+        const recentReviews = await Review.find({
+    userId: new mongoose.Types.ObjectId(req.user.userId)
+})
             .sort({ createdAt: -1 })
             .limit(5)
             .select("language createdAt");
             const reviewActivity = await Review.aggregate([
     {
+    $match: {
+        userId: new mongoose.Types.ObjectId(req.user.userId)
+    }
+},
+{
         $group: {
             _id: {
                 $dateToString: {
