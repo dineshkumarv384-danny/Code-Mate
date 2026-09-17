@@ -77,10 +77,11 @@ async function handleAuth() {
       setAuthMode("login");
       setAuthPassword("");
     } else {
-      await axios.post("http://localhost:3000/auth/login", {
-        email: authEmail,
-        password: authPassword,
-      });
+      const response = await axios.post("http://localhost:3000/auth/login", {
+  email: authEmail,
+  password: authPassword,
+});
+localStorage.setItem("token", response.data.token);
 
       setIsAuthenticated(true);
     }
@@ -95,8 +96,13 @@ async function handleAuth() {
   async function loadHistory() {
     try {
         const response = await axios.get(
-            "http://localhost:3000/api/history"
-        );
+    "http://localhost:3000/api/history",
+    {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+    }
+);
 
         setHistory(response.data);
     } catch (error) {
@@ -106,8 +112,13 @@ async function handleAuth() {
 async function loadDashboard() {
     try {
         const response = await axios.get(
-            "http://localhost:3000/api/dashboard"
-        );
+    "http://localhost:3000/api/dashboard",
+    {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+    }
+);
 
         setDashboard(response.data);
     } catch (error) {
@@ -141,9 +152,14 @@ async function deleteReview(id) {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/ai/get-review",
-        { code,language }
-      );
+  "http://localhost:3000/ai/get-review",
+  { code, language },
+  {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  }
+);
 
       setReview(response.data);
     } catch (error) {
