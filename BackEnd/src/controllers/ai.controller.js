@@ -4,6 +4,7 @@ const Review = require("../models/review.model");
 
 module.exports.getReview = async (req, res) => {
 
+    const userId = req.user.userId;
     const code = req.body.code;
     const language = req.body.language;
 
@@ -17,6 +18,7 @@ module.exports.getReview = async (req, res) => {
         code,
         language,
         review: response,
+        userId,
     });
 
     res.send(response);

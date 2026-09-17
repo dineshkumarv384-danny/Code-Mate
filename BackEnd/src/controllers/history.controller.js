@@ -2,8 +2,8 @@ const Review = require("../models/review.model");
 
 module.exports.getHistory = async (req, res) => {
     try {
-        const reviews = await Review.find()
-            .sort({ createdAt: -1 });
+        const reviews = await Review.find({ userId: req.user.userId })
+    .sort({ createdAt: -1 });
 
         res.json(reviews);
     } catch (error) {
@@ -13,7 +13,10 @@ module.exports.getHistory = async (req, res) => {
 };
 module.exports.deleteReview = async (req, res) => {
     try {
-        await Review.findByIdAndDelete(req.params.id);
+        await Review.findOneAndDelete({
+    _id: req.params.id,
+    userId: req.user.userId
+});
 
         res.json({
             message: "Review deleted successfully",
