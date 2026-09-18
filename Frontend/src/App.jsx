@@ -2,6 +2,9 @@ import { useState, useRef } from "react";
 import "prismjs/themes/prism-tomorrow.css";
 import Editor from "react-simple-code-editor";
 import prism from "prismjs";
+import "prismjs/components/prism-python";
+import "prismjs/components/prism-java";
+import "prismjs/components/prism-c";
 import Markdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
@@ -656,13 +659,13 @@ async function deleteReview(id) {
                   onValueChange={(value) =>
                     setCode(value)
                   }
-                  highlight={(value) =>
-                    prism.highlight(
-                      value,
-                      prism.languages.javascript,
-                      "javascript"
-                    )
-                  }
+                 highlight={(value) =>
+  prism.highlight(
+    value,
+    prism.languages[language] || prism.languages.javascript,
+    language
+  )
+}
                   padding={20}
                   style={{
                     fontFamily:
@@ -881,6 +884,27 @@ async function deleteReview(id) {
                           {children}
                         </p>
                       ),
+                      strong: ({ children }) => {
+  const text = String(children);
+
+  let className = "";
+
+  if (text.includes("Critical")) {
+    className = "severity-critical";
+  } else if (text.includes("Warning")) {
+    className = "severity-warning";
+  } else if (text.includes("Suggestion")) {
+    className = "severity-suggestion";
+  } else if (text.includes("Good Practice")) {
+    className = "severity-good";
+  }
+
+  return (
+    <strong className={className}>
+      {children}
+    </strong>
+  );
+},
 
                       ul: ({ children }) => (
                         <ul className="review-list">
