@@ -131,7 +131,12 @@ async function loadDashboard() {
 async function deleteReview(id) {
     try {
         await axios.delete(
-            `http://localhost:3000/api/history/${id}`
+            `http://localhost:3000/api/history/${id}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            }
         );
 
         setHistory((currentHistory) =>
@@ -531,6 +536,16 @@ async function deleteReview(id) {
             <span className="nav-icon">⚙</span>
             <span>Settings</span>
           </button>
+          <button
+  className="nav-item"
+  onClick={() => {
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
+  }}
+>
+  <span className="nav-icon">↪</span>
+  <span>Logout</span>
+</button>
 
 
           <div className="user-card">
