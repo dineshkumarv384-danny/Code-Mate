@@ -506,7 +506,10 @@ async function deleteReview(id) {
             className={`nav-item ${
               activePage === "analytics" ? "active" : ""
             }`}
-            onClick={() => setActivePage("analytics")}
+           onClick={() => {
+  setActivePage("analytics");
+  loadDashboard();
+}}
           >
             <span className="nav-icon">◫</span>
             <span>Analytics</span>
@@ -1004,7 +1007,13 @@ async function deleteReview(id) {
                         key={item._id}
                     >
                         <span>{item._id}</span>
-                        <span>{item.count} reviews</span>
+                        <span>
+  {item.count} reviews (
+  {dashboard.totalReviews > 0
+    ? Math.round((item.count / dashboard.totalReviews) * 100)
+    : 0}
+  %)
+</span>
                     </div>
                 ))
             )}
@@ -1085,10 +1094,110 @@ async function deleteReview(id) {
 
 
 
+{activePage === "analytics" && (
+  <div className="analytics-page">
 
+    <div className="analytics-header">
+  <h1>Analytics</h1>
+  <p>Track your code review activity and language usage.</p>
+</div>
+
+    <div className="analytics-metrics">
+
+  <div className="analytics-card">
+    <span>Total Reviews:</span>
+    <strong>{dashboard.totalReviews}</strong>
+  </div>
+
+  <div className="analytics-card">
+    <span>Most Used Language</span>
+    <strong>
+      {dashboard.languageStats.length > 0
+        ? dashboard.languageStats[0]._id
+        : "No data"}
+    </strong>
+  </div>
+</div>
+
+    <div className="analytics-card">
+      <span>Reviews by Language</span>
+
+      <div className="language-list">
+  {dashboard.languageStats.map((item) => (
+    <div className="language-row" key={item._id}>
+  <div className="language-info">
+    <strong>{item._id}</strong>
+    <span>
+      {item.count} reviews (
+      {dashboard.totalReviews > 0
+        ? Math.round((item.count / dashboard.totalReviews) * 100)
+        : 0}
+      %)
+    </span>
+  </div>
+
+  <div className="language-progress">
+    <div
+      className="language-progress-bar"
+      style={{
+        width: `${
+          dashboard.totalReviews > 0
+            ? (item.count / dashboard.totalReviews) * 100
+            : 0
+        }%`,
+      }}
+    ></div>
+  </div>
+</div>
+  ))}
+</div>
+    </div>
+
+    <div className="analytics-card">
+      <span>Review Activity</span>
+
+      <div className="activity-chart">
+        {dashboard.reviewActivity.map((item) => {
+          const maxCount = Math.max(
+            ...dashboard.reviewActivity.map(
+              (review) => review.count
+            ),
+            1
+          );
+
+          const width = (item.count / maxCount) * 100;
+
+          return (
+            <div
+              className="activity-row"
+              key={item._id}
+            >
+              <span className="activity-date">
+                {item._id}
+              </span>
+
+              <div className="activity-bar-container">
+                <div
+                  className="activity-bar"
+                  style={{ width: `${width}%` }}
+                ></div>
+              </div>
+
+              <strong className="activity-count">
+                {item.count}
+              </strong>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+
+  </div>
+)}
         {activePage !== "review" &&
     activePage !== "dashboard" &&
-    activePage !== "history" && (
+    activePage !== "history" &&
+    activePage !== "analytics" && (
 
           <div className="coming-soon">
 
