@@ -13,6 +13,7 @@ import "./App.css";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const [authMode, setAuthMode] = useState("login");
   const [authName, setAuthName] = useState("");
 const [authEmail, setAuthEmail] = useState("");
@@ -85,7 +86,7 @@ async function handleAuth() {
   password: authPassword,
 });
 localStorage.setItem("token", response.data.token);
-
+setCurrentUser(response.data.user);
       setIsAuthenticated(true);
     }
   } catch (error) {
@@ -551,13 +552,20 @@ async function deleteReview(id) {
           <div className="user-card">
 
             <div className="user-avatar">
-              DK
+              {currentUser?.name
+  ? currentUser.name
+      .split(" ")
+      .map((name) => name[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase()
+  : "U"}
             </div>
 
-            <div className="user-info">
-              <strong>Code-Mate Team</strong>
-              <span>Developer</span>
-            </div>
+           <div className="user-info">
+  <strong>{currentUser?.name || "User"}</strong>
+  <span>Developer</span>
+</div>
 
             <span className="user-menu">
               ⋮
