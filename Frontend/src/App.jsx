@@ -160,34 +160,55 @@ async function deleteReview(id) {
   setReview("");
   setLoading(false);
 }
-  async function reviewCode() {
-    if (!code.trim()) return;
+ async function reviewCode() {
+    if (!code.trim()) {
+        setReview(
+            "### ⚠ No Code Provided\n\nPlease write or paste some code into the editor before starting the review."
+        );
+        return;
+    }
 
     setLoading(true);
     setReview("");
 
     try {
-      const response = await axios.post(
-  "http://localhost:3000/ai/get-review",
-  { code, language },
-  {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  }
-);
+        const response = await axios.post(
+            "http://localhost:3000/ai/get-review",
+            { code, language },
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            }
+        );
 
-      setReview(response.data);
+        setReview(response.data);
+
     } catch (error) {
-      console.error(error);
+        console.error("Code review failed:", error);
 
-      setReview(
-        "### ⚠ Review Failed\n\nUnable to connect to the AI reviewer. Please make sure the backend server is running."
-      );
+        if (error.response?.status === 401) {
+            setReview(
+                "### 🔐 Authentication Required\n\nYour session has expired. Please log in again."
+            );
+        } else if (error.response?.status >= 500) {
+            setReview(
+                "### ⚠ Server Error\n\nThe Code-Mate backend encountered a problem while reviewing your code. Please try again."
+            );
+        } else if (error.request) {
+            setReview(
+                "### ⚠ Connection Failed\n\nUnable to connect to the Code-Mate backend. Please make sure the server is running."
+            );
+        } else {
+            setReview(
+                "### ⚠ Review Failed\n\nSomething went wrong while reviewing your code. Please try again."
+            );
+        }
+
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  }
+}
 
     if (!isAuthenticated) {
   return (
@@ -917,26 +938,26 @@ async function deleteReview(id) {
                           {children}
                         </p>
                       ),
-                      strong: ({ children }) => {
-  const text = String(children);
+                     strong: ({ children }) => {
+    const text = String(children).trim().toLowerCase();
 
-  let className = "";
+    let className = "";
 
-  if (text.includes("Critical")) {
-    className = "severity-critical";
-  } else if (text.includes("Warning")) {
-    className = "severity-warning";
-  } else if (text.includes("Suggestion")) {
-    className = "severity-suggestion";
-  } else if (text.includes("Good Practice")) {
-    className = "severity-good";
-  }
+    if (text.includes("critical")) {
+        className = "severity-critical";
+    } else if (text.includes("warning")) {
+        className = "severity-warning";
+    } else if (text.includes("suggestion")) {
+        className = "severity-suggestion";
+    } else if (text.includes("good practice")) {
+        className = "severity-good";
+    }
 
-  return (
-    <strong className={className}>
-      {children}
-    </strong>
-  );
+    return (
+        <strong className={className}>
+            {children}
+        </strong>
+    );
 },
 
                       ul: ({ children }) => (
@@ -951,11 +972,56 @@ async function deleteReview(id) {
                         </ol>
                       ),
 
-                      pre: ({ children }) => (
-                        <pre className="review-code">
-                          {children}
-                        </pre>
-                      ),
+                      pre: ({ children }) => {
+    const getText = (node) => {
+        if (typeof node === "string" || typeof node === "number") {
+            return String(node);
+        }
+
+        if (Array.isArray(node)) {
+            return node.map(getText).join("");
+        }
+
+        if (node?.props?.children) {
+            return getText(node.props.children);
+        }
+
+        return "";
+    };
+
+    const codeText = getText(children);
+
+    const copyCode = async () => {
+        try {
+            await navigator.clipboard.writeText(codeText);
+            console.log("Code copied successfully");
+        } catch (error) {
+            console.error("Failed to copy code:", error);
+        }
+    };
+
+    return (
+        <div className="review-code-wrapper">
+
+            <div className="review-code-toolbar">
+                <span>CODE</span>
+
+                <button
+                    type="button"
+                    className="copy-code-button"
+                    onClick={copyCode}
+                >
+                    COPY
+                </button>
+            </div>
+
+            <pre className="review-code">
+                {children}
+            </pre>
+
+        </div>
+    );
+},
 
                     }}
                   >
