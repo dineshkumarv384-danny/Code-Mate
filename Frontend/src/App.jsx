@@ -1307,35 +1307,151 @@ async function deleteReview(id) {
 
   </div>
 )}
-        {activePage !== "review" &&
-    activePage !== "dashboard" &&
-    activePage !== "history" &&
-    activePage !== "analytics" && (
+       {activePage === "settings" && (
 
-          <div className="coming-soon">
+    <div className="settings-page">
+      <div className="settings-card">
 
-            <div className="coming-icon">
-              ◈
-            </div>
+    <div className="settings-card-header">
+        <div>
+            <h3>Profile</h3>
+            <p>Your Code-Mate account information.</p>
+        </div>
+    </div>
+
+    <div className="settings-profile">
+
+        <div className="settings-avatar">
+    <img
+        src="/bunny-profile.png"
+        alt="Code-Mate profile"
+    />
+</div>
+
+        <div className="settings-profile-info">
+            <strong>
+                {currentUser?.name || "User"}
+            </strong>
 
             <span>
-              CODE-MATE
+                {currentUser?.email || "No email available"}
             </span>
+        </div>
 
-            <h2>
-              {activePage.charAt(0).toUpperCase() +
-                activePage.slice(1)}
-            </h2>
+    </div>
 
+</div>
+
+        <div className="settings-header">
+            <h1>Settings</h1>
             <p>
-              This module is coming next.
-              We're building Code-Mate one
-              layer at a time.
+                Manage your Code-Mate preferences and account.
             </p>
+        </div>
 
-          </div>
 
-        )}
+        <div className="settings-card">
+
+            <div className="settings-card-header">
+                <div>
+                    <h3>Account</h3>
+                    <p>Your current Code-Mate session.</p>
+                </div>
+            </div>
+
+            <div className="settings-row">
+                <div>
+                    <strong>Authentication</strong>
+                    <span>Account session is active</span>
+                </div>
+
+                <span className="settings-status">
+                    ONLINE
+                </span>
+            </div>
+
+        </div>
+
+
+        <div className="settings-card">
+
+            <div className="settings-card-header">
+                <div>
+                    <h3>Review Preferences</h3>
+                    <p>Configure how Code-Mate reviews your code.</p>
+                </div>
+            </div>
+
+            <div className="settings-row">
+                <div>
+                    <strong>AI Reviewer</strong>
+                    <span>
+                        Gemini-powered beginner-friendly analysis
+                    </span>
+                </div>
+
+                <span className="settings-status">
+                    ENABLED
+                </span>
+            </div>
+
+        </div>
+
+
+        <div className="settings-card danger-card">
+
+            <div className="settings-card-header">
+                <div>
+                    <h3>Session</h3>
+                    <p>Sign out of your Code-Mate account.</p>
+                </div>
+            </div>
+
+            <button
+                className="settings-logout-button"
+                onClick={() => {
+                    localStorage.removeItem("token");
+                    setIsAuthenticated(false);
+                }}
+            >
+                LOG OUT
+            </button>
+
+        </div>
+
+    </div>
+
+)}
+{activePage !== "review" &&
+ activePage !== "dashboard" &&
+ activePage !== "history" &&
+ activePage !== "analytics" &&
+ activePage !== "settings" && (
+
+    <div className="coming-soon">
+
+        <div className="coming-icon">
+            ◈
+        </div>
+
+        <span>
+            CODE-MATE
+        </span>
+
+        <h2>
+            {activePage.charAt(0).toUpperCase() +
+                activePage.slice(1)}
+        </h2>
+
+        <p>
+            This module is coming next.
+            We're building Code-Mate one
+            layer at a time.
+        </p>
+
+    </div>
+
+)}
 
       </section>
 
