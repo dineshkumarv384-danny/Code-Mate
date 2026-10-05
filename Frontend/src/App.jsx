@@ -57,7 +57,12 @@ const [showPassword, setShowPassword] = useState(false);
     totalReviews: 0,
     languageStats: [],
     recentReviews: [],
-    reviewActivity: []
+    reviewActivity: [],
+    severityStats: {
+        critical: 0,
+        warning: 0,
+        suggestion: 0
+    }
 });
 async function handleAuth() {
       if (!authEmail.trim() || !authPassword.trim()) {
@@ -97,18 +102,20 @@ setCurrentUser(response.data.user);
     );
   }
 }
-  async function loadHistory() {
+async function loadHistory() {
     try {
         const response = await axios.get(
-    "http://localhost:3000/api/history",
-    {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-    }
-);
+            "http://localhost:3000/api/history",
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            }
+        );
 
+        console.log("History data:", response.data);
         setHistory(response.data);
+
     } catch (error) {
         console.error("Failed to load history:", error);
     }
@@ -1102,7 +1109,7 @@ async function deleteReview(id) {
   <p>Track your code review activity and language usage.</p>
 </div>
 
-    <div className="analytics-metrics">
+<div className="analytics-metrics">
 
   <div className="analytics-card">
     <span>Total Reviews:</span>
@@ -1111,12 +1118,52 @@ async function deleteReview(id) {
 
   <div className="analytics-card">
     <span>Most Used Language</span>
+
     <strong>
       {dashboard.languageStats.length > 0
         ? dashboard.languageStats[0]._id
         : "No data"}
     </strong>
   </div>
+
+  <div className="analytics-card severity-summary">
+    <span>Review Quality</span>
+
+    <div className="severity-summary-list">
+
+      <div className="severity-summary-item">
+        <span className="severity-label critical">
+          🔴 Critical
+        </span>
+
+        <strong>
+          {dashboard.severityStats.critical}
+        </strong>
+      </div>
+
+      <div className="severity-summary-item">
+        <span className="severity-label warning">
+          🟠 Warning
+        </span>
+
+        <strong>
+          {dashboard.severityStats.warning}
+        </strong>
+      </div>
+
+      <div className="severity-summary-item">
+        <span className="severity-label suggestion">
+          🔵 Suggestion
+        </span>
+
+        <strong>
+          {dashboard.severityStats.suggestion}
+        </strong>
+      </div>
+
+    </div>
+  </div>
+
 </div>
 
     <div className="analytics-card">

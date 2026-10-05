@@ -3083,3 +3083,29 @@ body {
   background: #38bdf8;
   transition: width 0.3s ease;
 }
+/* Review Quality spacing */
+
+.severity-summary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.severity-summary-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 14px;
+}
+
+.severity-label {
+    min-width: 120px;
+    font-size: 14px;
+}
+
+.severity-summary-item strong {
+    color: #e2e8f0;
+    font-size: 16px;
+    font-weight: 700;
+}
