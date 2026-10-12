@@ -1467,11 +1467,218 @@ async function deleteReview(id) {
     </div>
 
 )}
+
+{activePage === "learn" && (
+    <div className="learn-page">
+        <div className="settings-header">
+            <h1>Learn to Code</h1>
+            <p>
+                Build your programming skills with beginner-friendly
+                lessons and practical examples.
+            </p>
+        </div>
+
+        <div className="learn-grid">
+            <div className="settings-card learn-card">
+                <span className="learn-number">LESSON 01</span>
+                <h3>Variables & Data Types</h3>
+                <p>Learn how to store information and work with different types of data.</p>
+                <button onClick={() => setActivePage("lesson-variables")}>
+                    START LESSON →
+                </button>
+            </div>
+
+            <div className="settings-card learn-card">
+                <span className="learn-number">LESSON 02</span>
+                <h3>Conditions</h3>
+                <p>Understand if, else if, and else statements to make decisions in code.</p>
+                <button onClick={() => setActivePage("lesson-conditions")}>
+                    START LESSON →
+                </button>
+            </div>
+
+            <div className="settings-card learn-card">
+                <span className="learn-number">LESSON 03</span>
+                <h3>Loops</h3>
+                <p>Learn how to repeat tasks using for and while loops.</p>
+                <button onClick={() => setActivePage("lesson-loops")}>
+                    START LESSON →
+                </button>
+            </div>
+
+            <div className="settings-card learn-card">
+                <span className="learn-number">LESSON 04</span>
+                <h3>Functions</h3>
+                <p>Organize reusable code into functions with parameters and return values.</p>
+                <button onClick={() => setActivePage("lesson-functions")}>
+                    START LESSON →
+                </button>
+            </div>
+
+            <div className="settings-card learn-card">
+                <span className="learn-number">PRACTICE</span>
+                <h3>Programming Quiz</h3>
+                <p>Test your understanding with beginner-level programming questions.</p>
+                <button onClick={() => setActivePage("quiz")}>
+                    START QUIZ →
+                </button>
+            </div>
+        </div>
+    </div>
+)}
+
+{["lesson-variables", "lesson-conditions", "lesson-loops", "lesson-functions"].includes(activePage) && (
+    <div className="learn-page">
+        <button
+            className="learn-back-button"
+            onClick={() => setActivePage("learn")}
+        >
+            ← BACK TO LEARN
+        </button>
+
+        <div className="settings-header">
+            <h1>
+                {activePage === "lesson-variables" && "Variables & Data Types"}
+                {activePage === "lesson-conditions" && "Conditions"}
+                {activePage === "lesson-loops" && "Loops"}
+                {activePage === "lesson-functions" && "Functions"}
+            </h1>
+            <p>Learn the concept, study the example, and try it yourself.</p>
+        </div>
+
+        <div className="settings-card">
+            {activePage === "lesson-variables" && (
+                <>
+                    <h3>What are variables?</h3>
+                    <p>Variables are named containers used to store values. Data types describe what kind of value is stored.</p>
+                    <h3>JavaScript example</h3>
+                    <pre><code>{`let name = "Danny";
+const age = 20;
+let score = 95;
+
+console.log(name);
+console.log(age);
+console.log(score);`}</code></pre>
+                    <p><strong>Remember:</strong> Use <code>let</code> for values that may change and <code>const</code> when you won't reassign the variable.</p>
+                </>
+            )}
+
+            {activePage === "lesson-conditions" && (
+                <>
+                    <h3>Making decisions with conditions</h3>
+                    <p>An if statement runs a block of code when its condition is true. Else provides an alternative.</p>
+                    <pre><code>{`const score = 75;
+
+if (score >= 50) {
+    console.log("Pass");
+} else {
+    console.log("Try again");
+}`}</code></pre>
+                    <p><strong>Remember:</strong> The condition inside the parentheses evaluates to true or false.</p>
+                </>
+            )}
+
+            {activePage === "lesson-loops" && (
+                <>
+                    <h3>Repeating tasks with loops</h3>
+                    <p>A loop repeats code while its stopping condition allows it to continue.</p>
+                    <pre><code>{`for (let i = 1; i <= 5; i++) {
+    console.log(i);
+}`}</code></pre>
+                    <p><strong>Remember:</strong> The loop starts at 1, continues through 5, and increments by 1 each time.</p>
+                </>
+            )}
+
+            {activePage === "lesson-functions" && (
+                <>
+                    <h3>Reusable code with functions</h3>
+                    <p>A function groups instructions into a reusable block. Parameters accept input and return sends a result back.</p>
+                    <pre><code>{`function add(a, b) {
+    return a + b;
+}
+
+console.log(add(3, 4)); // 7`}</code></pre>
+                    <p><strong>Remember:</strong> Calling <code>add(3, 4)</code> returns 7.</p>
+                </>
+            )}
+
+            <button
+                className="learn-back-button"
+                onClick={() => setActivePage("learn")}
+            >
+                ← BACK TO LESSONS
+            </button>
+        </div>
+    </div>
+)}
+
+{activePage === "quiz" && (
+    <div className="learn-page">
+        <button
+            className="learn-back-button"
+            onClick={() => setActivePage("learn")}
+        >
+            ← BACK TO LEARN
+        </button>
+
+        <div className="settings-header">
+            <h1>Programming Quiz</h1>
+            <p>Test your JavaScript fundamentals.</p>
+        </div>
+
+        <div className="settings-card">
+            {(() => {
+                const questions = [
+                    {
+                        question: "Which keyword declares a variable that can be reassigned?",
+                        options: ["const", "let", "fixed", "static"],
+                        answer: 1,
+                        explanation: "let declares a block-scoped variable that can be reassigned."
+                    },
+                    {
+                        question: "What does 5 === '5' return in JavaScript?",
+                        options: ["true", "false", "5", "undefined"],
+                        answer: 1,
+                        explanation: "Strict equality checks both value and type. A number is not a string."
+                    },
+                    {
+                        question: "Which loop is commonly used to repeat code a known number of times?",
+                        options: ["if", "switch", "for", "try"],
+                        answer: 2,
+                        explanation: "A for loop is commonly used when the iteration count or range is known."
+                    },
+                    {
+                        question: "What does a function's return statement do?",
+                        options: [
+                            "Repeats the function",
+                            "Returns a result to the caller",
+                            "Prints automatically",
+                            "Declares a variable"
+                        ],
+                        answer: 1,
+                        explanation: "return sends a value back to the code that called the function."
+                    },
+                    {
+                        question: "Which symbol checks strict equality in JavaScript?",
+                        options: ["=", "==", "===", "!="],
+                        answer: 2,
+                        explanation: "=== compares values without converting their types."
+                    }
+                ];
+
+                const [unused] = [null];
+                return <QuizContent questions={questions} />;
+            })()}
+        </div>
+    </div>
+)}
+
 {activePage !== "review" &&
  activePage !== "dashboard" &&
  activePage !== "history" &&
  activePage !== "analytics" &&
- activePage !== "settings" && (
+ activePage !== "settings" &&
+ activePage !== "learn" && (
 
     <div className="coming-soon">
 
@@ -1502,6 +1709,100 @@ async function deleteReview(id) {
 
     </main>
   );
+}
+
+function QuizContent({ questions }) {
+    const [currentQuestion, setCurrentQuestion] = useState(0);
+    const [answers, setAnswers] = useState({});
+    const [finished, setFinished] = useState(false);
+
+    const question = questions[currentQuestion];
+    const selectedAnswer = answers[currentQuestion];
+    const score = questions.filter(
+        (item, index) => answers[index] === item.answer
+    ).length;
+
+    function restartQuiz() {
+        setCurrentQuestion(0);
+        setAnswers({});
+        setFinished(false);
+    }
+
+    if (finished) {
+        return (
+            <div className="quiz-result">
+                <h2>Quiz Completed!</h2>
+                <p>
+                    Your score: <strong>{score} / {questions.length}</strong>
+                </p>
+                <p>
+                    {score === questions.length
+                        ? "Excellent work! You answered every question correctly."
+                        : score >= 3
+                        ? "Good job! Review the explanations and keep practising."
+                        : "Keep learning! Revisit the lessons and try again."}
+                </p>
+                <button onClick={restartQuiz}>
+                    TRY AGAIN
+                </button>
+            </div>
+        );
+    }
+
+    return (
+        <div className="quiz-content">
+            <p>
+                Question {currentQuestion + 1} of {questions.length}
+            </p>
+
+            <h3>{question.question}</h3>
+
+            <div className="quiz-options">
+                {question.options.map((option, index) => (
+                    <button
+                        key={option}
+                        className={`quiz-option ${
+                            selectedAnswer === index ? "selected" : ""
+                        }`}
+                        disabled={selectedAnswer !== undefined}
+                        onClick={() =>
+                            setAnswers({
+                                ...answers,
+                                [currentQuestion]: index
+                            })
+                        }
+                    >
+                        {option}
+                    </button>
+                ))}
+            </div>
+
+            {selectedAnswer !== undefined && (
+                <div className="quiz-feedback">
+                    <strong>
+                        {selectedAnswer === question.answer
+                            ? "Correct!"
+                            : "Not quite."}
+                    </strong>
+                    <p>{question.explanation}</p>
+
+                    <button
+                        onClick={() => {
+                            if (currentQuestion + 1 < questions.length) {
+                                setCurrentQuestion(currentQuestion + 1);
+                            } else {
+                                setFinished(true);
+                            }
+                        }}
+                    >
+                        {currentQuestion + 1 < questions.length
+                            ? "NEXT QUESTION →"
+                            : "SEE RESULTS"}
+                    </button>
+                </div>
+            )}
+        </div>
+    );
 }
 
 export default App;
