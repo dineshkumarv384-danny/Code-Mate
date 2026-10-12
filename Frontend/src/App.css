@@ -3364,3 +3364,38 @@ body {
     color: #94a3b8;
     font-size: 12px;
 }
+
+.history-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.history-clear-button {
+    padding: 10px 15px;
+    border: 1px solid rgba(248, 113, 113, 0.4);
+    border-radius: 8px;
+    background: rgba(248, 113, 113, 0.1);
+    color: #f87171;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.history-clear-button:hover {
+    background: rgba(248, 113, 113, 0.2);
+    border-color: #f87171;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(248, 113, 113, 0.12);
+}
+
+@media (max-width: 600px) {
+    .history-page-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

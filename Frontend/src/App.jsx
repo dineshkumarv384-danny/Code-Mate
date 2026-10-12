@@ -19,6 +19,11 @@ function App() {
 const [authEmail, setAuthEmail] = useState("");
 const [authPassword, setAuthPassword] = useState("");
 const [showPassword, setShowPassword] = useState(false);
+
+const [aiReviewerEnabled, setAiReviewerEnabled] = useState(
+    localStorage.getItem("aiReviewerEnabled") !== "false"
+);
+
     const panelRefs = useRef([]);
 
   function handlePanelMouseMove(event, index) {
@@ -161,6 +166,14 @@ async function deleteReview(id) {
   setLoading(false);
 }
  async function reviewCode() {
+  
+    if (!aiReviewerEnabled) {
+        setReview(
+            "### ⚠ AI Reviewer Disabled\n\nEnable the AI Reviewer in Settings before starting a code review."
+        );
+        return;
+    }
+
     if (!code.trim()) {
         setReview(
             "### ⚠ No Code Provided\n\nPlease write or paste some code into the editor before starting the review."
@@ -1131,8 +1144,31 @@ async function deleteReview(id) {
 </div>
 )}
 {activePage === "history" && (
-    <div className="history-page">
+    
+<div className="history-page">
+    <div className="history-page-header">
         <h2>Review History</h2>
+
+        {history.length > 0 && (
+            <button
+                className="history-clear-button"
+                onClick={async () => {
+                    const confirmed = window.confirm(
+                        "Are you sure you want to delete all your review history? This cannot be undone."
+                    );
+
+                    if (!confirmed) return;
+
+                    for (const item of [...history]) {
+                        await deleteReview(item._id);
+                    }
+                }}
+            >
+                CLEAR HISTORY
+            </button>
+        )}
+    </div>
+
 
         {history.length === 0 ? (
             <p>No reviews found yet.</p>
@@ -1390,9 +1426,18 @@ async function deleteReview(id) {
                     </span>
                 </div>
 
-                <span className="settings-status">
-                    ENABLED
-                </span>
+               
+<button
+    className="settings-status"
+    onClick={() => {
+        const nextValue = !aiReviewerEnabled;
+        setAiReviewerEnabled(nextValue);
+        localStorage.setItem("aiReviewerEnabled", String(nextValue));
+    }}
+>
+    {aiReviewerEnabled ? "ENABLED" : "DISABLED"}
+</button>
+
             </div>
 
         </div>
