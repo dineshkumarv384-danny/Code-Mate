@@ -673,9 +673,13 @@ async function deleteReview(id) {
             REVIEW WORKSPACE
         ================================================= */}
 
-        {activePage === "review" && (
+       
+{activePage === "review" && (
+  <>
+   
 
-          <div className="workspace">
+    <div className="workspace">
+
 
             {/* CODE PANEL */}
 
@@ -1045,12 +1049,39 @@ async function deleteReview(id) {
 
               )}
 
+           
             </section>
 
           </div>
+           {/* NEW: NATURAL-LANGUAGE PROMPT BAR */}
+    <div className="prompt-panel">
+      <label htmlFor="code-prompt">
+        WHAT WOULD YOU LIKE TO BUILD?
+      </label>
 
+      <textarea
+        id="code-prompt"
+        className="prompt-input"
+        placeholder="Example: Write a JavaScript program to find the factorial of a number..."
+        rows={1}
+      />
+
+      <div className="prompt-actions">
+        <span>
+          Describe your task in plain English
+        </span>
+
+        <button
+          type="button"
+          className="prompt-generate-button"
+        >
+          ✦ GENERATE ANSWER
+        </button>
+      </div>
+    </div>
+        </>
         )}
-
+  
 
         {/* =================================================
             FUTURE PAGES
