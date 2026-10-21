@@ -19,6 +19,7 @@ function App() {
 const [authEmail, setAuthEmail] = useState("");
 const [authPassword, setAuthPassword] = useState("");
 const [showPassword, setShowPassword] = useState(false);
+const [prompt, setPrompt] = useState("");
 
 const [aiReviewerEnabled, setAiReviewerEnabled] = useState(
     localStorage.getItem("aiReviewerEnabled") !== "false"
@@ -194,7 +195,7 @@ async function deleteReview(id) {
                 },
             }
         );
-
+console.log("Generated answer from backend:", response.data);
         setReview(response.data);
 
     } catch (error) {
@@ -222,7 +223,37 @@ async function deleteReview(id) {
         setLoading(false);
     }
 }
+const generateAnswer = async () => {
+    if (!prompt.trim()) {
+        setReview("Please enter a prompt describing what you want to build.");
+        return;
+    }
 
+    setLoading(true);
+    setReview("");
+
+    try {
+        const response = await axios.post(
+            "http://localhost:3000/ai/generate",
+            { prompt, language },
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            }
+        );
+
+        setReview(response.data);
+    } catch (error) {
+        console.error("Answer generation failed:", error);
+
+        setReview(
+            "### ⚠ Generation Failed\n\nUnable to generate an answer. Please check the backend connection and try again."
+        );
+    } finally {
+        setLoading(false);
+    }
+};
     if (!isAuthenticated) {
   return (
     <div className="auth-page">
@@ -1006,8 +1037,20 @@ async function deleteReview(id) {
         return "";
     };
 
-    const codeText = getText(children);
+    
+const codeElement = Array.isArray(children) ? children[0] : children;
 
+const codeText = getText(children);
+
+const languageClass =
+    codeElement?.props?.className || "";
+
+const detectedLanguage =
+    languageClass.match(/language-([\w+#]+)/)?.[1]?.toLowerCase() || "";
+    console.log("Language class:", languageClass);
+console.log("Detected language:", detectedLanguage);
+
+console.log("Generated code text:", codeText);
     const copyCode = async () => {
         try {
             await navigator.clipboard.writeText(codeText);
@@ -1020,17 +1063,65 @@ async function deleteReview(id) {
     return (
         <div className="review-code-wrapper">
 
-            <div className="review-code-toolbar">
-                <span>CODE</span>
+           
+<div className="review-code-toolbar">
+    <span>CODE</span>
 
-                <button
-                    type="button"
-                    className="copy-code-button"
-                    onClick={copyCode}
-                >
-                    COPY
-                </button>
-            </div>
+    <div className="review-code-actions">
+        <button
+            type="button"
+            className="copy-code-button"
+            onClick={copyCode}
+        >
+            COPY
+        </button>
+
+        
+<button
+    type="button"
+    className="copy-code-button"
+   
+
+onClick={() => {
+   const languageMap = {
+    javascript: "javascript",
+    js: "javascript",
+    python: "python",
+    py: "python",
+    java: "java",
+    c: "cpp",
+    cpp: "cpp",
+    cplusplus: "cpp"
+};
+
+const codeLanguage = detectedLanguage === "javascript"
+    ? (
+        /^\s*(def |print\(|import |from .* import |if __name__|# )/m.test(codeText)
+            ? "python"
+            : "javascript"
+    )
+    : detectedLanguage;
+
+if (codeLanguage && languageMap[codeLanguage]) {
+    setLanguage(languageMap[codeLanguage]);
+}
+
+    const cleanCode = codeText
+        .replace(/^```[a-zA-Z+#]*\s*\n?/, "")
+        .replace(/\n?```\s*$/, "")
+        .trim();
+
+    setCode(cleanCode);
+}}
+
+
+>
+    USE IN EDITOR
+</button>
+
+    </div>
+</div>
+
 
             <pre className="review-code">
                 {children}
@@ -1062,6 +1153,8 @@ async function deleteReview(id) {
       <textarea
         id="code-prompt"
         className="prompt-input"
+        value={prompt}
+onChange={(e) => setPrompt(e.target.value)}
         placeholder="Example: Write a JavaScript program to find the factorial of a number..."
         rows={1}
       />
@@ -1072,11 +1165,13 @@ async function deleteReview(id) {
         </span>
 
         <button
-          type="button"
-          className="prompt-generate-button"
-        >
-          ✦ GENERATE ANSWER
-        </button>
+    type="button"
+    className="prompt-generate-button"
+    onClick={generateAnswer}
+    disabled={loading}
+>
+    {loading ? "GENERATING..." : "✦ GENERATE ANSWER"}
+</button>
       </div>
     </div>
         </>

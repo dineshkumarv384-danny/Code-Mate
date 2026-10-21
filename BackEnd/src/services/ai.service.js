@@ -80,9 +80,23 @@ ${code}
 Provide a beginner-friendly code review following the requested structure.
 `;
 
-    const result = await model.generateContent(prompt);
+    let result;
 
-    return result.response.text();
+try {
+    result = await model.generateContent(prompt);
+} catch (error) {
+    if (error.status !== 503) {
+        throw error;
+    }
+
+    console.warn("Gemini is busy. Retrying once in 2 seconds...");
+
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    result = await model.generateContent(prompt);
+}
+
+return result.response.text();
 }
 
 module.exports = aiService;
